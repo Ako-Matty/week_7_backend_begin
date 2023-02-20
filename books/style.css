@@ -1,0 +1,10 @@
+body{
+    background-color: brown;
+}
+
+
+.titles {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
