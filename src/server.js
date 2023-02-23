@@ -1,8 +1,15 @@
+require("dotenv").config();
+require("./db/connection")
+// console.log(process.env.MY_SUPER_SECRET);
 //import express from "../node_modules/....."
 const { response } = require("express");
 const express = require("express");
+
+const port = process.env.PORT || 5001; 
 const { request } = require("http");
 
+
+const Book = require("./books/model");
 
 const app = express();
 
@@ -11,18 +18,16 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/book", (request, response) => {
-    // response.send("Hello from the book route!");
-    const book = {
-        title: "lord of the rings",
-        author: "tolkein",
-        genre: "fantasy",
-    }
+app.get("/books/getallbooks", async (request, response) => {
+    console.log(request);
+    const allBooks = await Book.find({});
 
+    console.log(allBooks);
+    
 
     const successResponse = {
         message: "response send succesfully",
-        book: book,
+        book: allBooks,
     };
 
     response.send(successResponse);
@@ -32,18 +37,16 @@ app.get("/book", (request, response) => {
 
 // post
 
-app.post("/book", (request, response) => {
-    // console.log(request.body)
+app.post("/books/addbooks", async (request, response) => {
+    console.log(request.body);
     // response.send("Hello from the post route!");
 
-
-
-    const newBook = {
-        id: Math.floor(Math.random() * 50),
+    const newBook = await Book.create({
         title: request.body.title,
         author: request.body.author,
         genre: request.body.genre,
-    };
+    });
+
 
 
     const successResponse = {
@@ -52,6 +55,7 @@ app.post("/book", (request, response) => {
     };
 
     response.send(successResponse);
+    // response.send(successMessage);
 
 });
 
@@ -59,15 +63,12 @@ app.post("/book", (request, response) => {
 // put
 
 
-app.put("/book", (request, response) => {
+app.put("/books/updatebook", async (request, response) => {
     // response.send ("hi from this put route")
 
-    const morebook = {
-        title: request.body.title,
-        author: request.body.author,
-        genre: request.body.genre,
-        price: request.body.genre = 300,
-    };
+    const morebook = await Book.updateOne (
+        { "title": "lord of the rings 1"}, { "title": "Matilda 2"}
+        );
 
     const successResponse = {
         message: "You have updated this!",
@@ -83,15 +84,12 @@ app.put("/book", (request, response) => {
 // delete
 
 
-app.delete("/book", (request, response) => {
-    response.send("hi from this delete route")
+app.delete("/book/deletebook", async (request, response) => {
+    // response.send("hi from this delete route")
 
-    const deletebook = {
-        title: request.body.title,
-        author: request.body.author,
-        genre: request.body.genre,
-        price: request.body.genre = 300,
-    }
+    const deletebook = await Book.deleteOne ({
+        title: "matilda 1"
+    })
 
     const successResponse = {
         message: "you have deleted this",
